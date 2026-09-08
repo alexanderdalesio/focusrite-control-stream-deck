@@ -1,22 +1,21 @@
 {
   "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
   "Name": "Focusrite Control",
-  "Version": "1.0.1.0",
+  "Version": "1.0.2.0",
   "Author": "alexanderdalesio",
   "Description": "Control a Scarlett interface through the local Focusrite Control API.",
   "URL": "https://github.com/alexanderdalesio/focusrite-control-stream-deck",
-  "SupportURL": "https://github.com/alexanderdalesio/focusrite-control-stream-deck/issues",
   "UUID": "com.alexanderdalesio.focusrite-control",
   "Category": "Focusrite Control",
   "CategoryIcon": "imgs/plugin/category-icon",
   "Icon": "imgs/plugin/marketplace",
   "CodePath": "bin/plugin.js",
-  "SDKVersion": 3,
+  "SDKVersion": 2,
   "Software": {
-    "MinimumVersion": "7.1"
+    "MinimumVersion": "6.6"
   },
   "Nodejs": {
-    "Version": "24"
+    "Version": "20"
   },
   "OS": [
     {

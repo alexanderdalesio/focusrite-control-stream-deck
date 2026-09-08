@@ -26,7 +26,7 @@ This independent project is not affiliated with or endorsed by Focusrite Audio E
 
 The plugin expects the API at `http://127.0.0.1:41780`. Every configurable action exposes the address in its property inspector.
 
-Requires Stream Deck 7.1 or newer. The Stream Deck plugin can run on macOS 12+ or Windows 10+, but the underlying Focusrite controller has only been hardware-tested on macOS.
+Requires Stream Deck 6.6 or newer. The plugin uses Stream Deck SDK 2 and its embedded Node.js 20 runtime for compatibility with direct `.streamDeckPlugin` installation. It can run on macOS 12+ or Windows 10+, but the underlying Focusrite controller has only been hardware-tested on macOS.
 
 ## Included actions
 
