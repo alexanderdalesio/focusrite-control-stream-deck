@@ -12,11 +12,21 @@
   "Icon": "imgs/plugin/marketplace",
   "CodePath": "bin/plugin.js",
   "SDKVersion": 3,
-  "Software": { "MinimumVersion": "7.1" },
-  "Nodejs": { "Version": "24" },
+  "Software": {
+    "MinimumVersion": "7.1"
+  },
+  "Nodejs": {
+    "Version": "24"
+  },
   "OS": [
-    { "Platform": "mac", "MinimumVersion": "12" },
-    { "Platform": "windows", "MinimumVersion": "10" }
+    {
+      "Platform": "mac",
+      "MinimumVersion": "12"
+    },
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
   ],
   "Actions": [
     {
@@ -24,11 +34,21 @@
       "UUID": "com.alexanderdalesio.focusrite-control.dim",
       "Icon": "imgs/actions/dim/list",
       "Tooltip": "Toggle monitor dim.",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/dim/off", "Title": "DIM", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/dim/on", "Title": "DIM", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/dim/off",
+          "Title": "DIM",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/dim/on",
+          "Title": "DIM",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -36,11 +56,21 @@
       "UUID": "com.alexanderdalesio.focusrite-control.monitor-mute",
       "Icon": "imgs/actions/mute/list",
       "Tooltip": "Toggle the main monitor outputs.",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/mute/off", "Title": "MUTE", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/mute/on", "Title": "MUTE", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/mute/off",
+          "Title": "MUTE",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/mute/on",
+          "Title": "MUTE",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -49,11 +79,21 @@
       "Icon": "imgs/actions/phantom/list",
       "Tooltip": "Toggle 48 V phantom power for a selected input.",
       "PropertyInspectorPath": "ui/phantom.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/phantom/off", "Title": "48V", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/phantom/on", "Title": "48V", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/phantom/off",
+          "Title": "48V",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/phantom/on",
+          "Title": "48V",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -62,12 +102,26 @@
       "Icon": "imgs/actions/air/list",
       "Tooltip": "Cycle Air off, Presence, and Presence + Drive for a selected input.",
       "PropertyInspectorPath": "ui/air.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/air/off", "Title": "AIR", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/air/presence", "Title": "AIR", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/air/drive", "Title": "DRIVE", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/air/off",
+          "Title": "AIR",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/air/presence",
+          "Title": "AIR",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/air/drive",
+          "Title": "DRIVE",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -76,11 +130,21 @@
       "Icon": "imgs/actions/instrument/list",
       "Tooltip": "Toggle instrument mode for a selected input.",
       "PropertyInspectorPath": "ui/input.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/instrument/off", "Title": "INST", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/instrument/on", "Title": "INST", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/instrument/off",
+          "Title": "INST",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/instrument/on",
+          "Title": "INST",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -89,14 +153,24 @@
       "Icon": "imgs/actions/headphone1Level/list",
       "Tooltip": "Adjust the left or right level for headphone output 1.",
       "PropertyInspectorPath": "ui/headphone-level.html",
-      "Controllers": ["Keypad", "Encoder"],
+      "Controllers": [
+        "Keypad",
+        "Encoder"
+      ],
       "Encoder": {
         "Icon": "imgs/actions/headphone1Level/list",
         "layout": "$B1",
-        "TriggerDescription": { "Rotate": "Adjust headphone 1", "Push": "Increase one step" }
+        "TriggerDescription": {
+          "Rotate": "Adjust headphone 1",
+          "Push": "Increase one step"
+        }
       },
       "States": [
-        { "Image": "imgs/actions/headphone1Level/key", "Title": "HP1 LEVEL", "TitleAlignment": "middle" }
+        {
+          "Image": "imgs/actions/headphone1Level/key",
+          "Title": "HP1 LEVEL",
+          "TitleAlignment": "middle"
+        }
       ]
     },
     {
@@ -105,11 +179,21 @@
       "Icon": "imgs/actions/headphone1Mute/list",
       "Tooltip": "Mute the left or right channel of headphone output 1.",
       "PropertyInspectorPath": "ui/headphone-mute.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/headphone1Mute/off", "Title": "HP1 MUTE", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/headphone1Mute/on", "Title": "HP1 MUTE", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/headphone1Mute/off",
+          "Title": "HP1 MUTE",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/headphone1Mute/on",
+          "Title": "HP1 MUTE",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -118,14 +202,24 @@
       "Icon": "imgs/actions/headphone2Level/list",
       "Tooltip": "Adjust the left or right level for headphone output 2.",
       "PropertyInspectorPath": "ui/headphone-level.html",
-      "Controllers": ["Keypad", "Encoder"],
+      "Controllers": [
+        "Keypad",
+        "Encoder"
+      ],
       "Encoder": {
         "Icon": "imgs/actions/headphone2Level/list",
         "layout": "$B1",
-        "TriggerDescription": { "Rotate": "Adjust headphone 2", "Push": "Increase one step" }
+        "TriggerDescription": {
+          "Rotate": "Adjust headphone 2",
+          "Push": "Increase one step"
+        }
       },
       "States": [
-        { "Image": "imgs/actions/headphone2Level/key", "Title": "HP2 LEVEL", "TitleAlignment": "middle" }
+        {
+          "Image": "imgs/actions/headphone2Level/key",
+          "Title": "HP2 LEVEL",
+          "TitleAlignment": "middle"
+        }
       ]
     },
     {
@@ -134,11 +228,21 @@
       "Icon": "imgs/actions/headphone2Mute/list",
       "Tooltip": "Mute the left or right channel of headphone output 2.",
       "PropertyInspectorPath": "ui/headphone-mute.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/headphone2Mute/off", "Title": "HP2 MUTE", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/headphone2Mute/on", "Title": "HP2 MUTE", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/headphone2Mute/off",
+          "Title": "HP2 MUTE",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/headphone2Mute/on",
+          "Title": "HP2 MUTE",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -147,14 +251,23 @@
       "Icon": "imgs/actions/level/list",
       "Tooltip": "Adjust a numeric gain or level control.",
       "PropertyInspectorPath": "ui/adjust.html",
-      "Controllers": ["Keypad", "Encoder"],
+      "Controllers": [
+        "Keypad",
+        "Encoder"
+      ],
       "Encoder": {
         "Icon": "imgs/actions/level/list",
         "layout": "$B1",
-        "TriggerDescription": { "Rotate": "Adjust level", "Push": "Increase one step" }
+        "TriggerDescription": {
+          "Rotate": "Adjust level",
+          "Push": "Increase one step"
+        }
       },
       "States": [
-        { "Image": "imgs/actions/level/key", "TitleAlignment": "middle" }
+        {
+          "Image": "imgs/actions/level/key",
+          "TitleAlignment": "middle"
+        }
       ]
     },
     {
@@ -163,11 +276,21 @@
       "Icon": "imgs/actions/toggle/list",
       "Tooltip": "Toggle any boolean control by API name.",
       "PropertyInspectorPath": "ui/toggle.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/toggle/off", "Title": "TOGGLE", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/toggle/on", "Title": "TOGGLE", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/toggle/off",
+          "Title": "TOGGLE",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/toggle/on",
+          "Title": "TOGGLE",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -176,9 +299,15 @@
       "Icon": "imgs/actions/set/list",
       "Tooltip": "Set any control to a configured value.",
       "PropertyInspectorPath": "ui/set.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
-        { "Image": "imgs/actions/set/key", "Title": "SET", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/set/key",
+          "Title": "SET",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -187,9 +316,15 @@
       "Icon": "imgs/actions/batch/list",
       "Tooltip": "Apply several control values in one API request.",
       "PropertyInspectorPath": "ui/batch.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
-        { "Image": "imgs/actions/batch/key", "Title": "BATCH", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/batch/key",
+          "Title": "BATCH",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -198,11 +333,21 @@
       "Icon": "imgs/actions/backend/list",
       "Tooltip": "Switch between Focusrite Control 2 and direct USB communication.",
       "PropertyInspectorPath": "ui/api.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/backend/fc2", "Title": "FC2", "TitleAlignment": "bottom" },
-        { "Image": "imgs/actions/backend/usb", "Title": "USB", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/backend/fc2",
+          "Title": "FC2",
+          "TitleAlignment": "bottom"
+        },
+        {
+          "Image": "imgs/actions/backend/usb",
+          "Title": "USB",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -211,9 +356,15 @@
       "Icon": "imgs/actions/reconnect/list",
       "Tooltip": "Rebuild the selected Focusrite connection.",
       "PropertyInspectorPath": "ui/api.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
-        { "Image": "imgs/actions/reconnect/key", "Title": "RETRY", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/reconnect/key",
+          "Title": "RETRY",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -222,9 +373,15 @@
       "Icon": "imgs/actions/dashboard/list",
       "Tooltip": "Open the Focusrite browser dashboard.",
       "PropertyInspectorPath": "ui/api.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "States": [
-        { "Image": "imgs/actions/dashboard/key", "Title": "GUI", "TitleAlignment": "bottom" }
+        {
+          "Image": "imgs/actions/dashboard/key",
+          "Title": "GUI",
+          "TitleAlignment": "bottom"
+        }
       ]
     },
     {
@@ -233,11 +390,19 @@
       "Icon": "imgs/actions/status/list",
       "Tooltip": "Display and refresh the selected communication method and connection state.",
       "PropertyInspectorPath": "ui/api.html",
-      "Controllers": ["Keypad"],
+      "Controllers": [
+        "Keypad"
+      ],
       "DisableAutomaticStates": true,
       "States": [
-        { "Image": "imgs/actions/status/off", "TitleAlignment": "middle" },
-        { "Image": "imgs/actions/status/on", "TitleAlignment": "middle" }
+        {
+          "Image": "imgs/actions/status/off",
+          "TitleAlignment": "middle"
+        },
+        {
+          "Image": "imgs/actions/status/on",
+          "TitleAlignment": "middle"
+        }
       ]
     }
   ]
