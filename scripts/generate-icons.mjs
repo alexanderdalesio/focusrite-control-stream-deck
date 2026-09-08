@@ -74,5 +74,5 @@ const previewCells = previewItems.map(([name, state, label], index) => {
 }).join("");
 await mkdir(docs, { recursive: true });
 const previewWidth = 956;
-const previewHeight = 46 + Math.ceil(previewItems.length / 5) * 196;
+const previewHeight = previewWidth;
 await writeFile(join(docs, "icon-preview.svg"), `<svg xmlns="http://www.w3.org/2000/svg" width="${previewWidth}" height="${previewHeight}" viewBox="0 0 ${previewWidth} ${previewHeight}"><rect width="${previewWidth}" height="${previewHeight}" rx="28" fill="#0b0e12"/>${previewCells}</svg>\n`);
