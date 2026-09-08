@@ -67,11 +67,12 @@ const previewItems = [
   ["status", "on", "Status"],
 ];
 const previewCells = previewItems.map(([name, state, label], index) => {
-  const x = 26 + (index % 4) * 186;
-  const y = 28 + Math.floor(index / 4) * 196;
+  const x = 26 + (index % 5) * 186;
+  const y = 28 + Math.floor(index / 5) * 196;
   const icon = keyIcon(glyphs[name], state).replace(/^<svg[^>]*>|<\/svg>\s*$/g, "");
   return `<g transform="translate(${x} ${y})"><svg width="144" height="144" viewBox="0 0 144 144">${icon}</svg><text x="72" y="169" text-anchor="middle" fill="#d8dde5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16">${label}</text></g>`;
 }).join("");
 await mkdir(docs, { recursive: true });
-const previewHeight = 46 + Math.ceil(previewItems.length / 4) * 196;
-await writeFile(join(docs, "icon-preview.svg"), `<svg xmlns="http://www.w3.org/2000/svg" width="770" height="${previewHeight}" viewBox="0 0 770 ${previewHeight}"><rect width="770" height="${previewHeight}" rx="28" fill="#0b0e12"/>${previewCells}</svg>\n`);
+const previewWidth = 956;
+const previewHeight = 46 + Math.ceil(previewItems.length / 5) * 196;
+await writeFile(join(docs, "icon-preview.svg"), `<svg xmlns="http://www.w3.org/2000/svg" width="${previewWidth}" height="${previewHeight}" viewBox="0 0 ${previewWidth} ${previewHeight}"><rect width="${previewWidth}" height="${previewHeight}" rx="28" fill="#0b0e12"/>${previewCells}</svg>\n`);
