@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Headphone Level</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+</head>
+<body>
+  <p class="hint">Choose the stereo side and adjustment per dial tick or key press. Use a negative step for a decrease key. Direct USB only.</p>
+  <sdpi-item label="Channel">
+    <sdpi-select setting="side" default="l">
+      <option value="l">Left</option>
+      <option value="r">Right</option>
+    </sdpi-select>
+  </sdpi-item>
+  <sdpi-item label="Step">
+    <sdpi-textfield setting="step" default="1" inputmode="decimal" placeholder="1"></sdpi-textfield>
+  </sdpi-item>
+  <sdpi-item label="API address">
+    <sdpi-textfield setting="apiUrl" default="http://127.0.0.1:41780"></sdpi-textfield>
+  </sdpi-item>
+</body>
+</html>

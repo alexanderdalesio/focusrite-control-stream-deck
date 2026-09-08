@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.streamDeckPlugin
+*.sdPlugin/logs/
+*.map
+.DS_Store

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Set Control</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+</head>
+<body>
+  <p class="hint">Set any control shown by <code>focusrite list</code>. Boolean, numeric, and named values are accepted.</p>
+  <sdpi-item label="Control">
+    <sdpi-textfield setting="control" placeholder="monitor-gain"></sdpi-textfield>
+  </sdpi-item>
+  <sdpi-item label="Value">
+    <sdpi-textfield setting="value" placeholder="-24"></sdpi-textfield>
+  </sdpi-item>
+  <sdpi-item label="API address">
+    <sdpi-textfield setting="apiUrl" default="http://127.0.0.1:41780"></sdpi-textfield>
+  </sdpi-item>
+</body>
+</html>

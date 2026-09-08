@@ -1,0 +1,13 @@
+body {
+  padding: 8px 0;
+}
+
+.hint {
+  color: #a9a9a9;
+  font: 12px/1.45 system-ui, sans-serif;
+  margin: 10px 16px 16px;
+}
+
+code {
+  color: #f45b69;
+}
