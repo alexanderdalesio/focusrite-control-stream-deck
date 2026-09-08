@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
   "Name": "Focusrite Control",
-  "Version": "1.0.0.0",
+  "Version": "1.0.1.0",
   "Author": "alexanderdalesio",
   "Description": "Control a Scarlett interface through the local Focusrite Control API.",
   "URL": "https://github.com/alexanderdalesio/focusrite-control-stream-deck",

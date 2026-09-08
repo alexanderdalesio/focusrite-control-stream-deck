@@ -1,6 +1,6 @@
 {
   "name": "focusrite-control-stream-deck",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stream Deck actions for the local Focusrite Control API",
   "type": "module",
   "private": true,
