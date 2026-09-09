@@ -13,8 +13,12 @@ function sendGlobal(event, payload) {
   socket.send(JSON.stringify(message));
 }
 
+function actionMessage(event, payload) {
+  return { event, action: actionId, context: actionContext, payload };
+}
+
 function sendAction(event, payload) {
-  socket.send(JSON.stringify({ event, action: actionId, context: actionContext, payload }));
+  socket.send(JSON.stringify(actionMessage(event, payload)));
 }
 
 function setActionSettings(update) {
@@ -86,9 +90,10 @@ function populateAvailableControls() {
 }
 
 function showConnectionStatus(message, state = '') {
-  const status = document.querySelector('#connection-status');
-  status.textContent = message;
-  status.dataset.state = state;
+  for (const status of document.querySelectorAll('.connection-status')) {
+    status.textContent = message;
+    status.dataset.state = state;
+  }
 }
 
 function beginConnectionRequest(connection, saving) {
@@ -137,12 +142,13 @@ function openConnectionDialog(required = false) {
   const dialog = document.querySelector('#connection-dialog');
   dialog.hidden = false;
   dialog.dataset.required = required ? 'true' : 'false';
-  document.querySelector('#cancel-api').disabled = required;
   document.querySelector('#api-name').focus();
 }
 
 function closeConnectionDialog() {
-  if (document.querySelector('#connection-dialog').dataset.required === 'true') return;
+  if (pendingConnection?.timeout) clearTimeout(pendingConnection.timeout);
+  pendingConnection = null;
+  document.querySelector('#save-api').disabled = false;
   document.querySelector('#connection-dialog').hidden = true;
 }
 
@@ -214,7 +220,7 @@ function buildConnectionPanel() {
   container.innerHTML = `
     <label class="field"><span>API selected</span><select id="api-connection"></select></label>
     <div class="button-row"><button id="add-api" type="button">Add API</button><button id="remove-api" class="quiet" type="button">Remove</button></div>
-    <p id="connection-status" class="status"></p>
+    <p id="connection-status" class="status connection-status" aria-live="polite"></p>
     <div id="connection-dialog" class="dialog" hidden>
       <div class="dialog-card">
         <h2>Connect a Focusrite API</h2>
@@ -222,6 +228,7 @@ function buildConnectionPanel() {
         <label class="field"><span>Connection name</span><input id="api-name" placeholder="Studio Scarlett"></label>
         <label class="field"><span>API URL</span><input id="api-url" value="http://127.0.0.1:41780" spellcheck="false"></label>
         <label class="field"><span>Access token</span><input id="api-token" type="password" placeholder="Required for network access"></label>
+        <p class="status connection-status" aria-live="polite"></p>
         <div class="button-row"><button id="save-api" type="button">Test and save</button><button id="cancel-api" class="quiet" type="button">Cancel</button></div>
       </div>
     </div>`;
@@ -249,7 +256,7 @@ window.connectElgatoStreamDeckSocket = function (port, propertyInspectorUUID, re
   inspectorId = propertyInspectorUUID;
   const actionInfo = JSON.parse(rawActionInfo);
   actionId = actionInfo.action;
-  actionContext = actionInfo.context;
+  actionContext = propertyInspectorUUID;
   actionSettings = actionInfo.payload.settings || {};
   buildConnectionPanel();
   bindActionFields();
