@@ -1,17 +1,25 @@
 let socket;
 let inspectorId;
+let actionId;
+let actionContext;
 let actionSettings = {};
 let globalSettings = {};
 let connectionDetails = null;
 let pendingConnection = null;
 
-function send(event, payload = {}) {
-  socket.send(JSON.stringify({ event, context: inspectorId, payload }));
+function sendGlobal(event, payload) {
+  const message = { event, context: inspectorId };
+  if (payload !== undefined) message.payload = payload;
+  socket.send(JSON.stringify(message));
+}
+
+function sendAction(event, payload) {
+  socket.send(JSON.stringify({ event, action: actionId, context: actionContext, payload }));
 }
 
 function setActionSettings(update) {
   actionSettings = { ...actionSettings, ...update };
-  send('setSettings', actionSettings);
+  sendAction('setSettings', actionSettings);
 }
 
 function normalizeUrl(value) {
@@ -83,16 +91,27 @@ function showConnectionStatus(message, state = '') {
   status.dataset.state = state;
 }
 
+function beginConnectionRequest(connection, saving) {
+  if (pendingConnection?.timeout) clearTimeout(pendingConnection.timeout);
+  const requestId = `${Date.now()}-${Math.random()}`;
+  const timeout = setTimeout(() => {
+    if (pendingConnection?.requestId !== requestId) return;
+    pendingConnection = null;
+    document.querySelector('#save-api').disabled = false;
+    showConnectionStatus('No reply from the plugin. Restart Stream Deck, then try again.', 'error');
+  }, 8000);
+  pendingConnection = { requestId, connection, saving, timeout };
+  sendAction('sendToPlugin', { type: 'inspectConnection', requestId, connection });
+}
+
 function inspectConnection(connection) {
   if (!connection) {
     connectionDetails = null;
     populateAvailableControls();
     return;
   }
-  const requestId = `${Date.now()}-${Math.random()}`;
-  pendingConnection = { requestId, connection, saving: false };
   showConnectionStatus(`Connecting to ${connection.name}…`);
-  send('sendToPlugin', { type: 'inspectConnection', requestId, connection });
+  beginConnectionRequest(connection, false);
 }
 
 function renderConnections() {
@@ -137,11 +156,9 @@ function saveConnection() {
       url: normalizeUrl(document.querySelector('#api-url').value),
       token: document.querySelector('#api-token').value.trim() || undefined,
     };
-    const requestId = `${Date.now()}-${Math.random()}`;
-    pendingConnection = { requestId, connection, saving: true };
     showConnectionStatus(`Testing ${name}…`);
     document.querySelector('#save-api').disabled = true;
-    send('sendToPlugin', { type: 'inspectConnection', requestId, connection });
+    beginConnectionRequest(connection, true);
   } catch (error) {
     showConnectionStatus(error.message, 'error');
   }
@@ -149,9 +166,11 @@ function saveConnection() {
 
 function receiveConnectionResult(payload) {
   if (!pendingConnection || payload.requestId !== pendingConnection.requestId) return;
+  clearTimeout(pendingConnection.timeout);
   document.querySelector('#save-api').disabled = false;
   if (!payload.ok) {
     showConnectionStatus(payload.error || 'Connection failed.', 'error');
+    pendingConnection = null;
     return;
   }
 
@@ -164,7 +183,7 @@ function receiveConnectionResult(payload) {
       connections,
       defaultConnectionId: globalSettings.defaultConnectionId || connection.id,
     };
-    send('setGlobalSettings', globalSettings);
+    sendGlobal('setGlobalSettings', globalSettings);
     setActionSettings({ connectionId: connection.id, apiUrl: undefined });
     document.querySelector('#connection-dialog').hidden = true;
     document.querySelector('#api-name').value = '';
@@ -220,7 +239,7 @@ function buildConnectionPanel() {
     if (!selected || !confirm(`Remove “${selected.name}”?`)) return;
     const connections = (globalSettings.connections || []).filter(({ id }) => id !== selected.id);
     globalSettings = { ...globalSettings, connections, defaultConnectionId: connections[0]?.id };
-    send('setGlobalSettings', globalSettings);
+    sendGlobal('setGlobalSettings', globalSettings);
     setActionSettings({ connectionId: connections[0]?.id });
     renderConnections();
   });
@@ -228,14 +247,17 @@ function buildConnectionPanel() {
 
 window.connectElgatoStreamDeckSocket = function (port, propertyInspectorUUID, registerEvent, _info, rawActionInfo) {
   inspectorId = propertyInspectorUUID;
-  actionSettings = JSON.parse(rawActionInfo).payload.settings || {};
+  const actionInfo = JSON.parse(rawActionInfo);
+  actionId = actionInfo.action;
+  actionContext = actionInfo.context;
+  actionSettings = actionInfo.payload.settings || {};
   buildConnectionPanel();
   bindActionFields();
 
   socket = new WebSocket(`ws://127.0.0.1:${port}`);
   socket.addEventListener('open', () => {
-    send(registerEvent);
-    send('getGlobalSettings');
+    socket.send(JSON.stringify({ event: registerEvent, uuid: inspectorId }));
+    sendGlobal('getGlobalSettings');
   });
   socket.addEventListener('message', (event) => {
     const message = JSON.parse(event.data);
