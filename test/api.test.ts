@@ -37,3 +37,23 @@ test("API errors preserve the service message", async () => {
 		globalThis.fetch = originalFetch;
 	}
 });
+
+test("connection inspection authenticates network requests", async () => {
+	const originalFetch = globalThis.fetch;
+	const requests: RequestInit[] = [];
+	globalThis.fetch = async (input, init) => {
+		requests.push(init ?? {});
+		const path = new URL(String(input)).pathname;
+		if (path.endsWith("/health")) return Response.json({ ok: true, backend: "usb", connected: true });
+		if (path.endsWith("/device")) return Response.json({ ok: true, device: { productName: "Studio Scarlett" } });
+		return Response.json({ ok: true, controls: { dim: { kind: "boolean", label: "Dim" } } });
+	};
+	try {
+		const result = await focusriteApi.inspect({ id: "studio", name: "Studio", url: "http://192.168.1.10:41780", token: "secret" });
+		assert.equal(result.deviceName, "Studio Scarlett");
+		assert.equal(result.controls.dim.kind, "boolean");
+		for (const request of requests) assert.equal(new Headers(request.headers).get("Authorization"), "Bearer secret");
+	} finally {
+		globalThis.fetch = originalFetch;
+	}
+});

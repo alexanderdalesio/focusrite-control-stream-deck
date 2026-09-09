@@ -13,6 +13,7 @@ import { type ApiSettings, type ControlValue, focusriteApi } from "../api";
 type ToggleSettings = ApiSettings & {
 	control?: string;
 	input?: string;
+	headphone?: string;
 	side?: string;
 };
 
@@ -31,6 +32,7 @@ type AdjustSettings = ApiSettings & {
 };
 
 type HeadphoneSettings = ApiSettings & {
+	headphone?: string;
 	side?: string;
 	step?: number | string;
 };
@@ -120,20 +122,20 @@ export class InstrumentAction extends ToggleAction {
 }
 
 abstract class HeadphoneMuteAction extends ToggleAction {
-	protected abstract readonly headphone: number;
+	protected readonly headphone?: number;
 	protected resolveControl(settings: ToggleSettings): string {
-		return `headphone-${this.headphone}${settings.side === "r" ? "r" : "l"}-mute`;
+		const headphone = this.headphone ?? Number(settings.headphone || "1");
+		return `headphone-${headphone}${settings.side === "r" ? "r" : "l"}-mute`;
 	}
 }
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.headphone1-mute" })
 export class Headphone1MuteAction extends HeadphoneMuteAction {
-	protected readonly headphone = 1;
 }
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.headphone2-mute" })
 export class Headphone2MuteAction extends HeadphoneMuteAction {
-	protected readonly headphone = 2;
+	protected override readonly headphone = 2;
 }
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.toggle" })
@@ -235,24 +237,28 @@ export class AdjustControlAction extends SingletonAction<AdjustSettings> {
 }
 
 abstract class HeadphoneLevelAction extends SingletonAction<HeadphoneSettings> {
-	protected abstract readonly headphone: number;
+	protected readonly headphone?: number;
+
+	private output(settings: HeadphoneSettings): number {
+		return this.headphone ?? Number(settings.headphone || "1");
+	}
 
 	private control(settings: HeadphoneSettings): string {
-		return `headphone-${this.headphone}${settings.side === "r" ? "r" : "l"}-level`;
+		return `headphone-${this.output(settings)}${settings.side === "r" ? "r" : "l"}-level`;
 	}
 
 	private step(settings: HeadphoneSettings): number { return Number(settings.step) || 1; }
 
 	private async refresh(actionInstance: Action, settings: HeadphoneSettings): Promise<void> {
 		const value = await focusriteApi.getCached(settings, this.control(settings));
-		await setTitle(actionInstance, `HP${this.headphone} ${settings.side === "r" ? "R" : "L"}\n${value} dB`);
+		await setTitle(actionInstance, `HP${this.output(settings)} ${settings.side === "r" ? "R" : "L"}\n${value} dB`);
 	}
 
 	private async adjust(actionInstance: Action, settings: HeadphoneSettings, ticks: number): Promise<void> {
 		const current = Number(await focusriteApi.get(settings, this.control(settings)));
 		if (!Number.isFinite(current)) throw new Error("The selected headphone level is unavailable.");
 		const value = await focusriteApi.set(settings, this.control(settings), current + this.step(settings) * ticks);
-		await setTitle(actionInstance, `HP${this.headphone} ${settings.side === "r" ? "R" : "L"}\n${value} dB`);
+		await setTitle(actionInstance, `HP${this.output(settings)} ${settings.side === "r" ? "R" : "L"}\n${value} dB`);
 	}
 
 	override onWillAppear(ev: WillAppearEvent<HeadphoneSettings>): Promise<void> {
@@ -281,12 +287,11 @@ abstract class HeadphoneLevelAction extends SingletonAction<HeadphoneSettings> {
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.headphone1-level" })
 export class Headphone1LevelAction extends HeadphoneLevelAction {
-	protected readonly headphone = 1;
 }
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.headphone2-level" })
 export class Headphone2LevelAction extends HeadphoneLevelAction {
-	protected readonly headphone = 2;
+	protected override readonly headphone = 2;
 }
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.batch" })
@@ -347,7 +352,7 @@ export class ReconnectAction extends SingletonAction<ApiSettings> {
 @action({ UUID: "com.alexanderdalesio.focusrite-control.dashboard" })
 export class DashboardAction extends SingletonAction<ApiSettings> {
 	override onKeyDown(ev: KeyDownEvent<ApiSettings>): Promise<void> {
-		return safely(ev.action, () => streamDeck.system.openUrl(focusriteApi.dashboardUrl(ev.payload.settings)));
+		return safely(ev.action, async () => streamDeck.system.openUrl(await focusriteApi.dashboardUrl(ev.payload.settings)));
 	}
 }
 

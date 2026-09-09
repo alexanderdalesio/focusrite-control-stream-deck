@@ -3,7 +3,7 @@
 [![CI](https://github.com/alexanderdalesio/focusrite-control-stream-deck/actions/workflows/ci.yml/badge.svg)](https://github.com/alexanderdalesio/focusrite-control-stream-deck/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-An unofficial Stream Deck plugin for controlling a Scarlett interface through the local [Focusrite Control API](https://github.com/alexanderdalesio/focusrite-control-2-api). Add ready-made keys for common controls or configure generic actions for anything the API exposes.
+An unofficial Stream Deck plugin for controlling one or more Scarlett interfaces through the [Focusrite Control API](https://github.com/alexanderdalesio/focusrite-control-2-api). Add ready-made keys for common controls or configure generic actions for anything the selected API exposes.
 
 > [!IMPORTANT]
 > Hardware testing is limited to **Focusrite Control 2 v1.1081.0.0** and a **Scarlett 16i16 4th Gen running firmware v3.0.2778.0 on macOS**. Other models, firmware, and operating systems are unverified.
@@ -22,9 +22,18 @@ This independent project is not affiliated with or endorsed by Focusrite Audio E
 
 2. Download the latest `.streamDeckPlugin` file from [Releases](https://github.com/alexanderdalesio/focusrite-control-stream-deck/releases/latest).
 3. Double-click it and approve the installation in Stream Deck.
-4. Drag actions from the **Focusrite Control** category onto your device.
+4. Drag an action from the **Focusrite Control** category onto your device.
+5. In its settings, choose **Add API**, name the connection, and enter its URL. The plugin tests the API before saving it.
 
-The plugin expects the API at `http://127.0.0.1:41780`. Every configurable action exposes the address in its property inspector.
+Connections are saved once for the whole plugin. Every action has an **API selected** dropdown and an **Add API** button, so a profile can control several interfaces or computers without repeatedly entering URLs. Compatible input, headphone, numeric, and boolean choices are read from the selected API instead of being hard-coded.
+
+Use `http://127.0.0.1:41780` when Stream Deck and the API run on the same computer. For a Windows Stream Deck controlling the API on a Mac, enable authenticated network access on the Mac:
+
+```bash
+focusrite network enable
+```
+
+Enter one of the displayed Mac URLs and its generated access token when adding the API on Windows. Keep the token private and allow incoming Node.js connections in the macOS firewall if prompted. Disable access with `focusrite network disable`.
 
 Requires Stream Deck 6.6 or newer. The plugin uses Stream Deck SDK 2 and its embedded Node.js 20 runtime for compatibility with direct `.streamDeckPlugin` installation. It can run on macOS 12+ or Windows 10+, but the underlying Focusrite controller has only been hardware-tested on macOS.
 
@@ -34,11 +43,11 @@ Requires Stream Deck 6.6 or newer. The plugin uses Stream Deck SDK 2 and its emb
 | --- | --- |
 | Dim | Toggles monitor dim and displays its current state |
 | Monitor Mute | Toggles the main monitor mute |
-| Phantom Power | Toggles 48 V for input 1 or 2 |
+| Phantom Power | Toggles 48 V for any compatible input reported by the API |
 | Air Mode | Toggles Air with FC2 or cycles Off, Presence, and Drive with direct USB |
-| Instrument Mode | Toggles instrument mode for input 1 or 2 |
-| Headphone 1/2 Level | Adjusts the selected left or right channel with a dial or key; direct USB only |
-| Headphone 1/2 Mute | Toggles mute for the selected left or right channel; direct USB only |
+| Instrument Mode | Toggles instrument mode for any compatible input |
+| Headphone Level | Adjusts a selected headphone output and channel with a dial or key; direct USB only |
+| Headphone Mute | Toggles mute for a selected headphone output and channel; direct USB only |
 | Adjust Level | Adjusts any numeric control with a dial or one key press per step |
 | Toggle Control | Toggles any named boolean control |
 | Set Control | Sends a configured value to any named control |

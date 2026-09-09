@@ -1,13 +1,23 @@
-body {
-  padding: 8px 0;
-}
-
-.hint {
-  color: #a9a9a9;
-  font: 12px/1.45 system-ui, sans-serif;
-  margin: 10px 16px 16px;
-}
-
-code {
-  color: #f45b69;
-}
+:root { color-scheme: dark; font: 12px/1.45 system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 12px; color: #eee; background: #2d2d2d; }
+.hint { color: #b8b8b8; margin: 4px 0 14px; }
+code { color: #ff6675; }
+.connection-panel { margin: -12px -12px 16px; padding: 12px; background: #252525; border-bottom: 1px solid #484848; }
+.field { display: grid; grid-template-columns: 105px minmax(0, 1fr); align-items: center; gap: 10px; margin: 8px 0; }
+input, select, textarea, button { color: #f4f4f4; background: #3a3a3a; border: 1px solid #555; border-radius: 4px; font: inherit; }
+input, select, textarea { width: 100%; padding: 6px 8px; }
+textarea { min-height: 104px; resize: vertical; }
+button { padding: 6px 11px; background: #d9364e; border-color: #ec4961; cursor: pointer; }
+button.quiet { background: #3a3a3a; border-color: #555; }
+button:disabled { opacity: .5; cursor: default; }
+.button-row { display: flex; justify-content: flex-end; gap: 7px; margin-top: 9px; }
+.status { min-height: 17px; margin: 8px 0 0; color: #b8b8b8; }
+.status[data-state="ok"] { color: #67d98a; }
+.status[data-state="warning"] { color: #f0c96c; }
+.status[data-state="error"] { color: #ff7183; }
+.dialog { position: fixed; inset: 0; z-index: 10; padding: 14px; background: rgba(0,0,0,.72); }
+.dialog-card { max-width: 420px; margin: 10px auto; padding: 15px; border: 1px solid #5a5a5a; border-radius: 7px; background: #292929; box-shadow: 0 8px 30px rgba(0,0,0,.45); }
+.dialog-card h2 { margin: 0 0 5px; font-size: 15px; }
+.dialog-card p { margin: 0 0 12px; color: #b8b8b8; }
+.section-title { margin: 0 0 10px; font-size: 13px; }

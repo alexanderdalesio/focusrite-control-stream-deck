@@ -1,3 +1,5 @@
 logs/
 *.map
 imgs/plugin/marketplace.svg
+imgs/actions/headphone2Level/
+imgs/actions/headphone2Mute/

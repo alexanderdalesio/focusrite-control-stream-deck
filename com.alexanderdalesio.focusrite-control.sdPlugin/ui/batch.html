@@ -1,18 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Run Batch</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
-</head>
-<body>
-  <p class="hint">Enter one <code>control=value</code> assignment per line. All values are sent through one API batch.</p>
-  <sdpi-item label="Commands">
-    <sdpi-textarea setting="commands" rows="6" placeholder="dim=on&#10;monitor-gain=-30"></sdpi-textarea>
-  </sdpi-item>
-  <sdpi-item label="API address">
-    <sdpi-textfield setting="apiUrl" default="http://127.0.0.1:41780"></sdpi-textfield>
-  </sdpi-item>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Run Batch</title><link rel="stylesheet" href="style.css"><script defer src="common.js"></script></head><body>
+<p class="hint">Enter one <code>control=value</code> per line. The complete batch uses one request and one persistent device session.</p>
+<label class="field"><span>Commands</span><textarea data-setting="commands" placeholder="dim=on&#10;monitor-gain=-30"></textarea></label>
+</body></html>

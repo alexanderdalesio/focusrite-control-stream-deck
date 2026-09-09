@@ -1,5 +1,8 @@
 import streamDeck from "@elgato/streamdeck";
 
+import { focusriteApi } from "./api";
+import type { FocusriteConnection } from "./connections.js";
+
 import {
 	AdjustControlAction,
 	AirAction,
@@ -21,6 +24,34 @@ import {
 } from "./actions/control-actions";
 
 streamDeck.logger.setLevel("info");
+
+type InspectorRequest = {
+	type?: string;
+	requestId?: string;
+	connection?: FocusriteConnection;
+};
+
+streamDeck.ui.onSendToPlugin<InspectorRequest>((event) => {
+	if (event.payload.type !== "inspectConnection" || !event.payload.connection) return;
+	void (async () => {
+		try {
+			const details = await focusriteApi.inspect(event.payload.connection!);
+			await streamDeck.ui.sendToPropertyInspector({
+				type: "connectionResult",
+				requestId: event.payload.requestId,
+				ok: true,
+				...details,
+			});
+		} catch (error) {
+			await streamDeck.ui.sendToPropertyInspector({
+				type: "connectionResult",
+				requestId: event.payload.requestId,
+				ok: false,
+				error: error instanceof Error ? error.message : String(error),
+			});
+		}
+	})();
+});
 
 const refreshableActions = [
 	new DimAction(),
