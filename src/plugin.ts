@@ -13,8 +13,6 @@ import {
 	GenericToggleAction,
 	Headphone1LevelAction,
 	Headphone1MuteAction,
-	Headphone2LevelAction,
-	Headphone2MuteAction,
 	InstrumentAction,
 	MonitorMuteAction,
 	PhantomAction,
@@ -59,12 +57,10 @@ const refreshableActions = [
 	new PhantomAction(),
 	new InstrumentAction(),
 	new Headphone1MuteAction(),
-	new Headphone2MuteAction(),
 	new GenericToggleAction(),
 	new AirAction(),
 	new AdjustControlAction(),
 	new Headphone1LevelAction(),
-	new Headphone2LevelAction(),
 	new BackendAction(),
 	new StatusAction(),
 ];
@@ -77,6 +73,6 @@ streamDeck.actions.registerAction(new DashboardAction());
 
 setInterval(() => {
 	for (const action of refreshableActions) void action.refreshVisible();
-}, 2000).unref();
+}, 2000);
 
-streamDeck.connect();
+await streamDeck.connect();
