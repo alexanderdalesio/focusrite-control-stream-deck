@@ -63,15 +63,15 @@ function populateAvailableControls() {
   const definitions = Object.entries(controls);
 
   for (const select of document.querySelectorAll('[data-control-kind]')) {
-    const kind = select.dataset.controlKind;
+    const kinds = new Set(select.dataset.controlKind.split('|'));
     const entries = definitions
-      .filter(([, definition]) => kind === 'any' || definition.kind === kind)
+      .filter(([, definition]) => kinds.has('any') || kinds.has(definition.kind))
       .map(([name, definition]) => [name, definition.label ? `${definition.label} (${name})` : name]);
     fillSelect(select, entries, 'No matching controls');
   }
 
   for (const select of document.querySelectorAll('[data-input-feature]')) {
-    const expression = new RegExp(`^input(\\d+)-${select.dataset.inputFeature}$`);
+    const expression = new RegExp(`^input(\\d+)-(?:${select.dataset.inputFeature})$`);
     const entries = definitions.flatMap(([name]) => {
       const match = expression.exec(name);
       return match ? [[match[1], `Input ${match[1]}`]] : [];

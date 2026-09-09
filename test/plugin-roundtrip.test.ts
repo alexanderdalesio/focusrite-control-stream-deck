@@ -28,7 +28,7 @@ test("installed plugin answers a property-inspector connection request", async (
 		colors: {},
 		devicePixelRatio: 1,
 		devices: [{ id: "device-1", name: "Stream Deck", size: { columns: 5, rows: 3 }, type: 0 }],
-		plugin: { uuid: "com.alexanderdalesio.focusrite-control", version: "1.1.3.0" },
+		plugin: { uuid: "com.alexanderdalesio.focusrite-control", version: "1.1.4.0" },
 	});
 	const plugin = spawn(process.execPath, [
 		"bin/plugin.js",
@@ -95,4 +95,119 @@ test("installed plugin answers a property-inspector connection request", async (
 		deviceName: "Test Scarlett",
 		controls: { dim: { kind: "boolean", label: "Dim" } },
 	});
+});
+
+test("installed plugin toggles USB phantom and string-backed instrument states", async (t) => {
+	const values: Record<string, boolean | string> = {
+		"input1-phantom-power": false,
+		"input1-instrument": "line",
+	};
+	const toggled: string[] = [];
+	const api = createServer((request, response) => {
+		response.setHeader("Content-Type", "application/json");
+		if (request.url === "/api/v1/state") {
+			response.end(JSON.stringify({ ok: true, values }));
+			return;
+		}
+		const match = /^\/api\/v1\/control\/([^/]+)\/toggle$/.exec(request.url || "");
+		if (match) {
+			const control = decodeURIComponent(match[1]);
+			toggled.push(control);
+			values[control] = control.endsWith("instrument") ? "instrument" : true;
+			response.end(JSON.stringify({ ok: true, value: values[control] }));
+			return;
+		}
+		response.statusCode = 404;
+		response.end(JSON.stringify({ ok: false, error: "Not found" }));
+	});
+	await new Promise<void>((resolve) => api.listen(0, "127.0.0.1", resolve));
+	t.after(() => api.close());
+	const apiAddress = api.address();
+	assert(apiAddress && typeof apiAddress === "object");
+
+	const streamDeck = new WebSocketServer({ port: 0, host: "127.0.0.1" });
+	await new Promise<void>((resolve) => streamDeck.once("listening", resolve));
+	t.after(() => streamDeck.close());
+	const socketAddress = streamDeck.address();
+	assert(socketAddress && typeof socketAddress === "object");
+
+	const info = JSON.stringify({
+		application: { font: "Arial", language: "en", platform: "windows", platformVersion: "11", version: "6.9.1" },
+		colors: {},
+		devicePixelRatio: 1,
+		devices: [{ id: "device-1", name: "Stream Deck", size: { columns: 5, rows: 3 }, type: 0 }],
+		plugin: { uuid: "com.alexanderdalesio.focusrite-control", version: "1.1.4.0" },
+	});
+	const plugin = spawn(process.execPath, [
+		"bin/plugin.js",
+		"-port", String(socketAddress.port),
+		"-pluginUUID", "com.alexanderdalesio.focusrite-control",
+		"-registerEvent", "registerPlugin",
+		"-info", info,
+	], {
+		cwd: new URL("../com.alexanderdalesio.focusrite-control.sdPlugin", import.meta.url),
+		stdio: ["ignore", "pipe", "pipe"],
+	});
+	t.after(() => plugin.kill());
+	let pluginOutput = "";
+	plugin.stdout.on("data", (chunk) => { pluginOutput += chunk.toString(); });
+	plugin.stderr.on("data", (chunk) => { pluginOutput += chunk.toString(); });
+
+	await new Promise<void>((resolve, reject) => {
+		const timeout = setTimeout(() => reject(new Error(`Action round-trip timed out. Toggled: ${toggled.join(", ")}. ${pluginOutput}`)), 5000);
+		plugin.once("exit", (code, signal) => reject(new Error(`Plugin exited with code ${code}, signal ${signal}. ${pluginOutput}`)));
+		streamDeck.once("connection", (socket) => {
+			const initial = new Set<string>();
+			const enabled = new Set<string>();
+			const actions = [
+				["com.alexanderdalesio.focusrite-control.phantom", "phantom-action"],
+				["com.alexanderdalesio.focusrite-control.instrument", "instrument-action"],
+			];
+			socket.on("message", (data) => {
+				const message = JSON.parse(data.toString());
+				if (message.event === "registerPlugin") {
+					for (const [action, context] of actions) {
+						socket.send(JSON.stringify({
+							event: "willAppear",
+							action,
+							context,
+							device: "device-1",
+							payload: {
+								controller: "Keypad",
+								coordinates: { column: 0, row: 0 },
+								isInMultiAction: false,
+								settings: { apiUrl: `http://127.0.0.1:${apiAddress.port}`, input: "1" },
+								state: 0,
+							},
+						}));
+					}
+				} else if (message.event === "setState" && message.payload?.state === 0 && !initial.has(message.context)) {
+					initial.add(message.context);
+					const action = actions.find(([, context]) => context === message.context)?.[0];
+					if (action) socket.send(JSON.stringify({
+						event: "keyDown",
+						action,
+						context: message.context,
+						device: "device-1",
+						payload: {
+							controller: "Keypad",
+							coordinates: { column: 0, row: 0 },
+							isInMultiAction: false,
+							settings: { apiUrl: `http://127.0.0.1:${apiAddress.port}`, input: "1" },
+							state: 0,
+							userDesiredState: 1,
+						},
+					}));
+				} else if (message.event === "setState" && message.payload?.state === 1) {
+					enabled.add(message.context);
+					if (enabled.size === actions.length) {
+						clearTimeout(timeout);
+						resolve();
+					}
+				}
+			});
+		});
+	});
+
+	assert.deepEqual(new Set(toggled), new Set(["input1-phantom-power", "input1-instrument"]));
 });

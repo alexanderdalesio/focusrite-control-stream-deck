@@ -7,8 +7,10 @@ export type ApiSettings = ConnectionSettings;
 export type ControlDefinition = {
 	kind: string;
 	label?: string;
-	minimum?: number;
-	maximum?: number;
+	min?: number;
+	max?: number;
+	step?: number;
+	unit?: string;
 	values?: string[];
 };
 
@@ -43,11 +45,26 @@ async function requestConnection<T extends ApiResponse>(connection: FocusriteCon
 		headers,
 		signal: AbortSignal.timeout(5000),
 	});
-	const body = await response.json() as T;
+	const text = await response.text();
+	let body: T;
+	try {
+		body = JSON.parse(text) as T;
+	} catch {
+		throw new Error(`Focusrite API returned an invalid response (${response.status}). Check that ${baseUrl(connection)} points to a Focusrite Control API.`);
+	}
 	if (!response.ok || !body.ok) {
 		throw new Error(body.error || `Focusrite API request failed (${response.status}).`);
 	}
 	return body;
+}
+
+export function controlValueEnabled(value: ControlValue): boolean {
+	if (typeof value === "boolean") return value;
+	if (typeof value === "number") return value !== 0;
+	const normalized = value.trim().toLowerCase();
+	if (["", "0", "off", "false", "disabled", "none", "line"].includes(normalized)) return false;
+	if (["1", "on", "true", "enabled", "instrument", "inst"].includes(normalized)) return true;
+	throw new Error(`Cannot interpret control value as on or off: ${value}`);
 }
 
 function json(body: unknown): RequestInit {
@@ -108,6 +125,13 @@ export const focusriteApi = {
 		const values = await this.stateCached(settings);
 		if (!(control in values)) throw new Error(`Control is unavailable: ${control}`);
 		return values[control];
+	},
+
+	async findAvailableControl(settings: ApiSettings, candidates: string[]): Promise<string> {
+		const values = await this.stateCached(settings);
+		const control = candidates.find((candidate) => candidate in values);
+		if (!control) throw new Error(`None of these controls are available: ${candidates.join(", ")}`);
+		return control;
 	},
 
 	async toggle(settings: ApiSettings, control: string): Promise<ControlValue> {

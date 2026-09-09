@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { focusriteApi } from "../src/api.ts";
+import { controlValueEnabled, focusriteApi } from "../src/api.ts";
+
+test("toggle state parsing handles boolean, numeric, and named states", () => {
+	for (const value of [false, 0, "off", "false", "disabled", "line"]) assert.equal(controlValueEnabled(value), false);
+	for (const value of [true, 1, "on", "true", "enabled", "instrument", "inst"]) assert.equal(controlValueEnabled(value), true);
+	assert.throws(() => controlValueEnabled("unexpected"), /Cannot interpret/);
+});
 
 test("control and batch requests use the configured local API", async () => {
 	const requests: Array<{ url: string; init?: RequestInit }> = [];
@@ -33,6 +39,34 @@ test("API errors preserve the service message", async () => {
 	globalThis.fetch = async () => Response.json({ ok: false, error: "No interface connected." }, { status: 503 });
 	try {
 		await assert.rejects(focusriteApi.reconnect({}), /No interface connected/);
+	} finally {
+		globalThis.fetch = originalFetch;
+	}
+});
+
+test("invalid HTTP responses identify a wrong API URL", async () => {
+	const originalFetch = globalThis.fetch;
+	globalThis.fetch = async () => new Response("<html>Not the API</html>", { status: 200 });
+	try {
+		await assert.rejects(focusriteApi.health({ apiUrl: "http://wrong-service.test" }), /points to a Focusrite Control API/);
+	} finally {
+		globalThis.fetch = originalFetch;
+	}
+});
+
+test("selects the backend-specific control name from live state", async () => {
+	const originalFetch = globalThis.fetch;
+	globalThis.fetch = async () => Response.json({
+		ok: true,
+		values: { "input1-phantom-power": false, "input1-instrument": false },
+	});
+	try {
+		const settings = { apiUrl: "http://control-selection.test" };
+		assert.equal(
+			await focusriteApi.findAvailableControl(settings, ["input1-phantom", "input1-phantom-power"]),
+			"input1-phantom-power",
+		);
+		assert.equal(await focusriteApi.findAvailableControl(settings, ["input1-instrument"]), "input1-instrument");
 	} finally {
 		globalThis.fetch = originalFetch;
 	}

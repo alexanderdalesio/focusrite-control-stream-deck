@@ -8,7 +8,7 @@ import streamDeck, {
 	type WillAppearEvent,
 } from "@elgato/streamdeck";
 
-import { type ApiSettings, type ControlValue, focusriteApi } from "../api";
+import { type ApiSettings, type ControlValue, controlValueEnabled, focusriteApi } from "../api";
 
 type ToggleSettings = ApiSettings & {
 	control?: string;
@@ -72,9 +72,15 @@ function parseValue(raw: string | undefined): ControlValue {
 
 abstract class ToggleAction extends SingletonAction<ToggleSettings> {
 	protected abstract resolveControl(settings: ToggleSettings): string;
+	protected resolveControls(settings: ToggleSettings): string[] { return [this.resolveControl(settings)]; }
+
+	private async availableControl(settings: ToggleSettings): Promise<string> {
+		return focusriteApi.findAvailableControl(settings, this.resolveControls(settings));
+	}
 
 	private async refresh(actionInstance: Action, settings: ToggleSettings): Promise<void> {
-		const enabled = Boolean(await focusriteApi.getCached(settings, this.resolveControl(settings)));
+		const control = await this.availableControl(settings);
+		const enabled = controlValueEnabled(await focusriteApi.getCached(settings, control));
 		await setState(actionInstance, enabled ? 1 : 0);
 	}
 
@@ -88,7 +94,8 @@ abstract class ToggleAction extends SingletonAction<ToggleSettings> {
 
 	override onKeyDown(ev: KeyDownEvent<ToggleSettings>): Promise<void> {
 		return safely(ev.action, async () => {
-			const enabled = Boolean(await focusriteApi.toggle(ev.payload.settings, this.resolveControl(ev.payload.settings)));
+			const control = await this.availableControl(ev.payload.settings);
+			const enabled = controlValueEnabled(await focusriteApi.toggle(ev.payload.settings, control));
 			await setState(ev.action, enabled ? 1 : 0);
 		});
 	}
@@ -114,6 +121,10 @@ export class MonitorMuteAction extends ToggleAction {
 @action({ UUID: "com.alexanderdalesio.focusrite-control.phantom" })
 export class PhantomAction extends ToggleAction {
 	protected resolveControl(settings: ToggleSettings): string { return `input${settings.input || "1"}-phantom`; }
+	protected override resolveControls(settings: ToggleSettings): string[] {
+		const input = settings.input || "1";
+		return [`input${input}-phantom`, `input${input}-phantom-power`];
+	}
 }
 
 @action({ UUID: "com.alexanderdalesio.focusrite-control.instrument" })
